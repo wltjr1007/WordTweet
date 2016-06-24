@@ -36,7 +36,7 @@ def readuserfile():
         try:
             f = open(userfile, "r", encoding="utf8")
             readcount = 1
-            tmp = f.readline()
+            tmp = f.readline().strip()
             idnum = 0
             date = datetime.datetime
             while tmp:
@@ -44,7 +44,7 @@ def readuserfile():
                     if readcount % 4 == 1 and len(tmp) > 0:
                         idnum = int(tmp)
                     elif readcount % 4 == 2:
-                        date = datetime.datetime.strptime(tmp, "%a %b %d %H:%M:%S %z %Y\n")
+                        date = datetime.datetime.strptime(tmp.strip(), "%a %b %d %H:%M:%S %z %Y")
                     elif readcount % 4 == 3:
                         if idnum not in users:
                             users.add(UserNode(idnum, date, tmp))
@@ -110,18 +110,20 @@ def readtweet(users):
             while tmp:
                 if readcount % 4 == 1:
                     idnum = int(tmp)
+                if readcount % 4 != 0 and idnum not in users:
+                    print("Can't find user id", tmp, "in the user profile data file!")
                 elif readcount % 4 == 2:
-                    date = datetime.datetime.strptime(tmp, "%a %b %d %H:%M:%S %z %Y\n")
+                    date = datetime.datetime.strptime(tmp.strip(), "%a %b %d %H:%M:%S %z %Y")
                 elif readcount % 4 == 3:
                     if readcount == 3:
-                        tweets.append(TweetNode(idnum, date, tmp))
+                        tweets.append(TweetNode(idnum, date, tmp.strip()))
                     else:
                         for i in range(len(tweets)):
                             if tweets[i].idnum >= idnum:
-                                tweets.insert(i, TweetNode(idnum, date, tmp))
+                                tweets.insert(i, TweetNode(idnum, date, tmp.strip()))
                                 break
                             elif i == len(tweets) - 1:
-                                tweets.append(TweetNode(idnum, date, tmp))
+                                tweets.append(TweetNode(idnum, date, tmp.strip()))
                                 break
                 readcount += 1
                 tmp = f.readline()
@@ -131,6 +133,7 @@ def readtweet(users):
         except FileNotFoundError:
             print("Wrong path for word tweet file!!!", sys.exc_info())
     return tweets
+
 
 def getinput():
     prompt = "0. Read data files\n" \
@@ -182,11 +185,77 @@ def statistics(users, tweets):
     print("Maximum tweet(s) from a user:", tweetmax)
 
 
-# def mosttweetword(tweets):
-# wordlist = [0, 0, 0, 0, 0]
-# currank = 0
-# while currank < 5:
-#     for tweet in tweets:
+def mosttweetword(tweets):
+    sortlist = []
+    maxlist = [["", -1], ["", -2], ["", -3], ["", -4], ["", -5]]
+    for i in range(len(tweets)):
+        content = tweets[i].content
+        if i == 0:
+            sortlist.append(content)
+        else:
+            try:
+                sortlist.insert(sortlist.index(content), content)
+            except ValueError:
+                sortlist.append(content)
+    tmp = ""
+    curcnt = -1
+    for word in sortlist:
+        if tmp != word:
+            if curcnt != -1:
+                if maxlist[0][1] < curcnt:
+                    maxlist[0][0] = tmp
+                    maxlist[0][1] = curcnt
+                elif maxlist[1][1] < curcnt:
+                    maxlist[1][0] = tmp
+                    maxlist[1][1] = curcnt
+                elif maxlist[2][1] < curcnt:
+                    maxlist[2][0] = tmp
+                    maxlist[2][1] = curcnt
+                elif maxlist[3][1] < curcnt:
+                    maxlist[3][0] = tmp
+                    maxlist[3][1] = curcnt
+                elif maxlist[4][1] < curcnt:
+                    maxlist[4][0] = tmp
+                    maxlist[4][1] = curcnt
+            tmp = word
+            curcnt = 1
+        else:
+            curcnt += 1
+    print("Top 5 most tweeted words")
+    print("1.", maxlist[0])
+    print("2.", maxlist[1])
+    print("3.", maxlist[2])
+    print("4.", maxlist[3])
+    print("5.", maxlist[4])
+
+
+# def mosttweetuser(tweets):
+
+# def heapsort(tweets):
+#     def heapify(tweets):
+#         start = (len(tweets) - 2) / 2
+#         while start >= 0:
+#             godown(tweets, start, len(tweets) - 1)
+#             start -= 1
+#
+#     def godown(tweets, start, end):
+#         root = start
+#         while root * 2 + 1 <= end:
+#             child = root * 2 + 1
+#             if child + 1 <= end and tweets[child].content < tweets[child + 1].content:
+#                 child += 1
+#             if child <= end and tweets[root].content < tweets[child].content:
+#                 tweets[root], tweets[child] = tweets[child], tweets[root]
+#                 root = child
+#             else:
+#                 return
+#
+#     heapify(tweets)
+#     end = len(tweets) - 1
+#     while end > 0:
+#         tweets[end], tweets[0] = tweets[0], tweets[end]
+#         godown(tweets, 0, end - 1)
+#         end -= 1
 
 
 def main():
@@ -206,21 +275,20 @@ def main():
                 tweets = readtweet(users)
             elif usrin == 1:
                 statistics(users, tweets)
-                # elif usrin == 2:
-                # mosttweetword(tweets)
+            elif usrin == 2:
+                mosttweetword(tweets)
                 # elif usrin ==3:
+                #     mosttweetuser(tweets)
                 # elif usrin ==4:
                 # elif usrin ==5:
                 # elif usrin ==6:
                 # elif usrin ==7:
                 # elif usrin ==8:
                 # elif usrin ==9:
-        except ValueError:
-            print("Input must be an integer:", sys.exc_info())
+        # except ValueError:
+        #     print("Input must be an integer:", sys.exc_info())
         except:
             print("Unexpected Error!!!", sys.exc_info())
-
-
 
 
 main()
