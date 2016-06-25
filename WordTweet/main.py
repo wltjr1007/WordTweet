@@ -47,7 +47,7 @@ def readuserfile():
                         date = datetime.datetime.strptime(tmp.strip(), "%a %b %d %H:%M:%S %z %Y")
                     elif readcount % 4 == 3:
                         if idnum not in users:
-                            users.add(UserNode(idnum, date, tmp))
+                            users.add(UserNode(idnum, date, tmp.strip()))
                         else:
                             print("Duplicate user id", idnum, "omitted.")
                 except ValueError:
@@ -229,7 +229,47 @@ def mosttweetword(tweets):
     print("5.", maxlist[4])
 
 
-# def mosttweetuser(tweets):
+def mosttweetuser(tweets, users):
+    maxlist = [[0, "", -1], [0, "", -2], [0, "", -3], [0, "", -4], [0, "", -5]]
+    tmp = -1
+    curcnt = -1
+    for tweet in tweets:
+        if tmp != tweet.idnum:
+            if curcnt != -1:
+                if maxlist[0][2] < curcnt:
+                    maxlist[0][0] = tmp
+                    maxlist[0][2] = curcnt
+                elif maxlist[1][2] < curcnt:
+                    maxlist[1][0] = tmp
+                    maxlist[1][2] = curcnt
+                elif maxlist[2][2] < curcnt:
+                    maxlist[2][0] = tmp
+                    maxlist[2][2] = curcnt
+                elif maxlist[3][2] < curcnt:
+                    maxlist[3][0] = tmp
+                    maxlist[3][2] = curcnt
+                elif maxlist[4][2] < curcnt:
+                    maxlist[4][0] = tmp
+                    maxlist[4][2] = curcnt
+            tmp = tweet.idnum
+            curcnt = 1
+        else:
+            curcnt += 1
+    for user in users:
+        if user.idnum == maxlist[0][0]:
+            maxlist[0][1] = user.nickname
+        elif user.idnum == maxlist[1][0]:
+            maxlist[1][1] = user.nickname
+        elif user.idnum == maxlist[2][0]:
+            maxlist[2][1] = user.nickname
+        elif user.idnum == maxlist[3][0]:
+            maxlist[3][1] = user.nickname
+        elif user.idnum == maxlist[4][0]:
+            maxlist[4][1] = user.nickname
+
+    print("Top 5 most tweeted users [ID #, nickname, tweet count]")
+    for i in range(5):
+        print(i + 1, ".", maxlist[i])
 
 # def heapsort(tweets):
 #     def heapify(tweets):
@@ -277,8 +317,8 @@ def main():
                 statistics(users, tweets)
             elif usrin == 2:
                 mosttweetword(tweets)
-                # elif usrin ==3:
-                #     mosttweetuser(tweets)
+            elif usrin == 3:
+                mosttweetuser(tweets, users)
                 # elif usrin ==4:
                 # elif usrin ==5:
                 # elif usrin ==6:
