@@ -338,6 +338,30 @@ def deletetweets(tweets):
             tweets.remove(tweet)
             cnt += 1
     print(cnt, "tweets deleted.")
+
+
+def deleteusers(tweets, users):
+    usrin = input("Input a word to delete users who tweeted it:")
+    deletelist = []
+    for tweet in tweets:
+        if usrin == tweet.content:
+            if tweet.idnum not in deletelist:
+                deletelist.append(tweet.idnum)
+            tweets.remove(tweet)
+    print("Deleting user id", deletelist, "from friendship, tweets, and user profile.")
+    for user in users.copy():
+        if user.idnum in deletelist.copy():
+            users.remove(user)
+        else:
+            user.friend = list(set(user.friend) - set(deletelist))
+
+
+def strongconnect(users):
+    return
+
+
+def shortpath(users):
+    return
 # def heapsort(tweets):
 #     def heapify(tweets):
 #         start = (len(tweets) - 2) / 2
@@ -396,11 +420,14 @@ def main():
                     searchfriend(users, tweetsearch)
             elif usrin == 6:
                 deletetweets(tweets)
-                # elif usrin ==7:
-                # elif usrin ==8:
-                # elif usrin ==9:
-        # except ValueError:
-        #     print("Input must be an integer:", sys.exc_info())
+            elif usrin == 7:
+                deleteusers(tweets, users)
+            elif usrin == 8:
+                strongconnect(users)
+            elif usrin == 9:
+                shortpath(users)
+        except ValueError:
+            print("Input must be an integer:", sys.exc_info())
         except:
             print("Unexpected Error!!!", sys.exc_info())
 
