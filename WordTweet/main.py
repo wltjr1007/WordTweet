@@ -271,6 +271,38 @@ def mosttweetuser(tweets, users):
     for i in range(5):
         print(i + 1, ".", maxlist[i])
 
+
+def searchtweet(tweets, users):
+    userin = input("Input a word to search:")
+    tweetmentioned = []
+    for tweet in tweets:
+        if tweet.content == userin and tweet.idnum not in tweetmentioned:
+            tweetmentioned.append(tweet.idnum)
+    if len(tweetmentioned) != 0:
+        print("These users tweeted the word", userin)
+        cnt = 1
+        for user in users:
+            if user.idnum in tweetmentioned:
+                print(cnt, ".", user.idnum, user.nickname)
+                cnt += 1
+    else:
+        print("No one tweeted the word ", userin)
+    return tweetmentioned
+
+
+def searchfriend(users, search):
+    if len(search) == 0:
+        print("Function #4 returned 0 users.")
+    else:
+        cnt = 0
+        print("Friends of users searched in Function #4.")
+        for user in users:
+            if user.idnum in search:
+                cnt += 1
+                if len(user.friend) == 0:
+                    print(cnt, ". (", user.idnum, user.nickname, ") have no friends.")
+                else:
+                    print(cnt, ". (", user.idnum, user.nickname, ")'s friends are :", user.friend)
 # def heapsort(tweets):
 #     def heapify(tweets):
 #         start = (len(tweets) - 2) / 2
@@ -303,6 +335,7 @@ def main():
     users = None
     tweets = None
     usrin = -1
+    tweetsearch = None
     while usrin != 99:
         try:
             usrin = getinput()
@@ -319,8 +352,13 @@ def main():
                 mosttweetword(tweets)
             elif usrin == 3:
                 mosttweetuser(tweets, users)
-                # elif usrin ==4:
-                # elif usrin ==5:
+            elif usrin == 4:
+                tweetsearch = searchtweet(tweets, users)
+            elif usrin == 5:
+                if 4 not in inputset:
+                    print("**********ERROR!! FUNCTION #4 IS NOT PERFORMED**********")
+                else:
+                    searchfriend(users, tweetsearch)
                 # elif usrin ==6:
                 # elif usrin ==7:
                 # elif usrin ==8:
