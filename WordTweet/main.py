@@ -200,18 +200,32 @@ def mosttweetword(tweets):
     tmp = ""
     curcnt = -1
     for word in sortlist:
-        if tmp != word:
+        if tmp == word:
+            curcnt += 1
+        else:
             if curcnt != -1:
+                # print(curcnt)
                 if maxlist[0][1] < curcnt:
+                    for i in range(4, 0, -1):
+                        maxlist[i][0] = maxlist[i - 1][0]
+                        maxlist[i][1] = maxlist[i - 1][1]
                     maxlist[0][0] = tmp
                     maxlist[0][1] = curcnt
                 elif maxlist[1][1] < curcnt:
+                    for i in range(4, 1, -1):
+                        maxlist[i][0] = maxlist[i - 1][0]
+                        maxlist[i][1] = maxlist[i - 1][1]
                     maxlist[1][0] = tmp
                     maxlist[1][1] = curcnt
                 elif maxlist[2][1] < curcnt:
+                    for i in range(4, 2, -1):
+                        maxlist[i][0] = maxlist[i - 1][0]
+                        maxlist[i][1] = maxlist[i - 1][1]
                     maxlist[2][0] = tmp
                     maxlist[2][1] = curcnt
                 elif maxlist[3][1] < curcnt:
+                    maxlist[4][0] = maxlist[3][0]
+                    maxlist[4][1] = maxlist[3][1]
                     maxlist[3][0] = tmp
                     maxlist[3][1] = curcnt
                 elif maxlist[4][1] < curcnt:
@@ -219,8 +233,6 @@ def mosttweetword(tweets):
                     maxlist[4][1] = curcnt
             tmp = word
             curcnt = 1
-        else:
-            curcnt += 1
     print("Top 5 most tweeted words")
     print("1.", maxlist[0])
     print("2.", maxlist[1])
@@ -237,15 +249,27 @@ def mosttweetuser(tweets, users):
         if tmp != tweet.idnum:
             if curcnt != -1:
                 if maxlist[0][2] < curcnt:
+                    for i in range(4, 0, -1):
+                        maxlist[i][0] = maxlist[i - 1][0]
+                        maxlist[i][2] = maxlist[i - 1][2]
                     maxlist[0][0] = tmp
                     maxlist[0][2] = curcnt
                 elif maxlist[1][2] < curcnt:
+                    for i in range(4, 1, -1):
+                        maxlist[i][0] = maxlist[i - 1][0]
+                        maxlist[i][2] = maxlist[i - 1][2]
                     maxlist[1][0] = tmp
                     maxlist[1][2] = curcnt
                 elif maxlist[2][2] < curcnt:
+                    for i in range(4, 2, -1):
+                        maxlist[i][0] = maxlist[i - 1][0]
+                        maxlist[i][2] = maxlist[i - 1][2]
                     maxlist[2][0] = tmp
                     maxlist[2][2] = curcnt
                 elif maxlist[3][2] < curcnt:
+                    for i in range(4, 3, -1):
+                        maxlist[i][0] = maxlist[i - 1][0]
+                        maxlist[i][2] = maxlist[i - 1][2]
                     maxlist[3][0] = tmp
                     maxlist[3][2] = curcnt
                 elif maxlist[4][2] < curcnt:
@@ -303,6 +327,17 @@ def searchfriend(users, search):
                     print(cnt, ". (", user.idnum, user.nickname, ") have no friends.")
                 else:
                     print(cnt, ". (", user.idnum, user.nickname, ")'s friends are :", user.friend)
+
+
+def deletetweets(tweets):
+    asdf = []
+    usrin = input("Input a word to delete:")
+    cnt = 0
+    for tweet in tweets:
+        if tweet.content == usrin:
+            tweets.remove(tweet)
+            cnt += 1
+    print(cnt, "tweets deleted.")
 # def heapsort(tweets):
 #     def heapify(tweets):
 #         start = (len(tweets) - 2) / 2
@@ -359,7 +394,8 @@ def main():
                     print("**********ERROR!! FUNCTION #4 IS NOT PERFORMED**********")
                 else:
                     searchfriend(users, tweetsearch)
-                # elif usrin ==6:
+            elif usrin == 6:
+                deletetweets(tweets)
                 # elif usrin ==7:
                 # elif usrin ==8:
                 # elif usrin ==9:
