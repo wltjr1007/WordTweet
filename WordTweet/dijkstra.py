@@ -56,12 +56,12 @@ def relax(g, vertices, minvert, visit, path):
 
 def shortest_path(g, origin, dest):
     visited, paths = dijkstra(g, origin)
-    fullpath = []
+    fullpath = []  # Array list for storing full path.
     tempdest = paths[dest]
 
     while tempdest != origin:
         fullpath.insert(0, tempdest)
-        tempdest = paths[tempdest]
+        tempdest = paths[tempdest]  #Find next path
 
     fullpath.insert(0, origin)
     fullpath.append(dest)
