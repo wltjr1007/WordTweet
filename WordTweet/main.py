@@ -1,6 +1,8 @@
 import datetime
 import sys
 
+from WordTweet.WordTweet.DFS import DepthFirstSearch, DFSVertex
+
 
 class UserNode:
     def __init__(self, idnum, date, nickname):
@@ -8,6 +10,8 @@ class UserNode:
         self.date = date
         self.nickname = nickname
         self.friend = []
+        self.d = 0
+        self.f = 0
 
     def __hash__(self):
         return self.idnum
@@ -357,36 +361,48 @@ def deleteusers(tweets, users):
 
 
 def strongconnect(users):
-    return
+    vertexes = []
+    for user in users:
+        vertexes.append(DFSVertex(user.idnum))
 
+    DFS = DepthFirstSearch()
+    DFS.set_vertices(vertexes)
+
+    for vertex in vertexes:
+        for user in users:
+            if vertex.name == user.idnum:
+                for friend in vertexes:
+                    if friend.name in user.friend:
+                        vertex.add(friend)
+                break
+    print("Top 5 SCC")
+    DFS.scc()
 
 def shortpath(users):
-    return
-# def heapsort(tweets):
-#     def heapify(tweets):
-#         start = (len(tweets) - 2) / 2
-#         while start >= 0:
-#             godown(tweets, start, len(tweets) - 1)
-#             start -= 1
-#
-#     def godown(tweets, start, end):
-#         root = start
-#         while root * 2 + 1 <= end:
-#             child = root * 2 + 1
-#             if child + 1 <= end and tweets[child].content < tweets[child + 1].content:
-#                 child += 1
-#             if child <= end and tweets[root].content < tweets[child].content:
-#                 tweets[root], tweets[child] = tweets[child], tweets[root]
-#                 root = child
-#             else:
-#                 return
-#
-#     heapify(tweets)
-#     end = len(tweets) - 1
-#     while end > 0:
-#         tweets[end], tweets[0] = tweets[0], tweets[end]
-#         godown(tweets, 0, end - 1)
-#         end -= 1
+    from WordTweet.WordTweet.dijkstra import Graph, shortest_path
+    usrin = int(input("Input a user id to find shortest path for all other users:"))
+    graph = Graph()
+    weight = dict()
+    paths = []
+    for user in users:
+        graph.addvertex(user.idnum)
+        weight[user.idnum] = len(user.friend)
+    for user in users:
+        for friend in user.friend:
+            graph.addedge(user, friend, weight[friend])
+    for user in users:
+        if usrin != user.idnum:
+            paths.append(shortest_path(graph, usrin, user.idnum))
+    for i in range(5):
+        max = -1
+        tmp = None
+        for path in paths:
+            if max < path[0]:
+                tmp = path
+                max = path[0]
+        if tmp is not None:
+            print(i + 1, ".", tmp)
+            paths.remove(tmp)
 
 
 def main():
@@ -396,7 +412,7 @@ def main():
     usrin = -1
     tweetsearch = None
     while usrin != 99:
-        try:
+        # try:
             usrin = getinput()
             inputset.append(usrin)
             if usrin != 0 and 0 not in inputset:
@@ -426,10 +442,10 @@ def main():
                 strongconnect(users)
             elif usrin == 9:
                 shortpath(users)
-        except ValueError:
-            print("Input must be an integer:", sys.exc_info())
-        except:
-            print("Unexpected Error!!!", sys.exc_info())
+                # except ValueError:
+                #     print("Input must be an integer:", sys.exc_info())
+                # except:
+                #     print("Unexpected Error!!!", sys.exc_info())
 
 
 main()
